@@ -85,8 +85,8 @@ while (sum >= m)
 temp = (out << 1) | next_bit;
 if (temp >= m) temp = temp - m;
 ```
-![Adder Diagram](images/Long_division_1.png)
-![Adder Diagram](images/Long_division_2.png)
+![Adder Diagram](Images/Long_division_1.png)
+![Adder Diagram](Images/Long_division_2.png)
 
 - Performs in **constant number of steps** based on bit width, not input size
 - Better suited for **real-time cryptographic operations**
