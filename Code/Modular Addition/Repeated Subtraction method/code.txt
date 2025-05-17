@@ -1,0 +1,38 @@
+module modular_adder_repeated_subtract #(
+    parameter WIDTH = 4  // bit-width (adjust as needed)
+)(
+    input  wire clk,
+    input  wire rst,
+    input  wire start,
+    input  wire [WIDTH-1:0] a,
+    input  wire [WIDTH-1:0] b,
+    input  wire [WIDTH-1:0] m,
+    output reg  [WIDTH-1:0] result,
+    output reg  done
+);
+    reg [WIDTH:0] sum;   // One bit wider to prevent overflow
+    reg busy;
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            result <= 0;
+            sum <= 0;
+            done <= 0;
+            busy <= 0;
+        end else begin
+            if (start && !busy) begin
+                sum <= a + b;
+                busy <= 1;
+                done <= 0;
+            end else if (busy) begin
+                if (sum >= m) begin
+                    sum <= sum - m;
+                end else begin
+                    result <= sum[WIDTH-1:0];
+                    done <= 1;
+                    busy <= 0;
+                end
+            end
+        end
+    end
+endmodule

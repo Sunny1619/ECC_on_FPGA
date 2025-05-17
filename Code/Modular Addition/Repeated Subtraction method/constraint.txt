@@ -1,0 +1,58 @@
+# FPGA board: Boolean board
+# Product family: Spartan-7
+# Project part: xc7s50csga324-1
+
+set_property CFGBVS VCCO [current_design]
+set_property CONFIG_VOLTAGE 3.3 [current_design]
+
+# Clock and Reset
+set_property PACKAGE_PIN F14 [get_ports clk]
+set_property PACKAGE_PIN J2  [get_ports rst]
+set_property IOSTANDARD LVCMOS33 [get_ports clk]
+set_property IOSTANDARD LVCMOS33 [get_ports rst]
+create_clock -period 20.000 -name clk -waveform {0.000 10.000} [get_ports clk]
+
+# Start Signal
+set_property PACKAGE_PIN L1 [get_ports start]
+set_property IOSTANDARD LVCMOS33 [get_ports start]
+
+# Input: a[3:0]
+set_property PACKAGE_PIN T2 [get_ports {a[3]}]
+set_property PACKAGE_PIN U1 [get_ports {a[2]}]
+set_property PACKAGE_PIN U2 [get_ports {a[1]}]
+set_property PACKAGE_PIN V2 [get_ports {a[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {a[*]}]
+
+# Input: b[3:0]
+set_property PACKAGE_PIN P2 [get_ports {b[3]}]
+set_property PACKAGE_PIN R1 [get_ports {b[2]}]
+set_property PACKAGE_PIN R2 [get_ports {b[1]}]
+set_property PACKAGE_PIN T1 [get_ports {b[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {b[*]}]
+
+# Input: m[3:0]
+set_property PACKAGE_PIN M2 [get_ports {m[3]}]
+set_property PACKAGE_PIN N1 [get_ports {m[2]}]
+set_property PACKAGE_PIN N2 [get_ports {m[1]}]
+set_property PACKAGE_PIN P1 [get_ports {m[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {m[*]}]
+
+# Output: result[3:0]
+set_property PACKAGE_PIN E1 [get_ports {result[3]}]
+set_property PACKAGE_PIN F2 [get_ports {result[2]}]
+set_property PACKAGE_PIN F1 [get_ports {result[1]}]
+set_property PACKAGE_PIN G2 [get_ports {result[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {result[*]}]
+
+# Output: done
+set_property PACKAGE_PIN G1 [get_ports done]
+set_property IOSTANDARD LVCMOS33 [get_ports done]
+
+# Timing Constraints
+set_input_delay -clock clk -max 3.000 [get_ports {a[*] b[*] m[*] start}]
+set_input_delay -clock clk -min 2.500 [get_ports {a[*] b[*] m[*] start}]
+set_input_delay -clock clk -max 1.500 [get_ports rst]
+set_input_delay -clock clk -min 1.000 [get_ports rst]
+
+set_output_delay -clock clk -max 2.000 [get_ports {result[*] done}]
+set_output_delay -clock clk -min 1.500 [get_ports {result[*] done}]

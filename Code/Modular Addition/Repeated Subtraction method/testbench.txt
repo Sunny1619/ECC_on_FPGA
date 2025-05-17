@@ -1,0 +1,69 @@
+`timescale 1ns / 1ps
+
+module tb_modular_adder_repeated_subtract;
+
+    // Parameters
+    parameter WIDTH = 4;
+
+    // Testbench signals
+    reg clk;
+    reg rst;
+    reg start;
+    reg [WIDTH-1:0] a;
+    reg [WIDTH-1:0] b;
+    reg [WIDTH-1:0] m;
+    wire [WIDTH-1:0] result;
+    wire done;
+
+    // Instantiate the DUT (Device Under Test)
+    modular_adder_repeated_subtract #(WIDTH) dut (
+        .clk(clk),
+        .rst(rst),
+        .start(start),
+        .a(a),
+        .b(b),
+        .m(m),
+        .result(result),
+        .done(done)
+    );
+
+    // Clock generation (10ns period)
+    initial clk = 0;
+    always #5 clk = ~clk;
+
+    // Task to perform a test
+    task run_test;
+        input [WIDTH-1:0] ta, tb, tm;
+        begin
+            a = ta;
+            b = tb;
+            m = tm;
+            start = 1;
+            @(posedge clk);  // Wait 1 clock cycle
+            start = 0;
+
+            wait (done);  // Wait until done goes high
+
+            $display("a = %d, b = %d, m = %d --> result = %d", a, b, m, result);
+            @(posedge clk);  // Give time for result
+        end
+    endtask
+
+    // Test sequence
+    initial begin
+        // Initialize
+        rst = 1;
+        start = 0;
+        a = 0; b = 0; m = 1;
+        @(posedge clk);
+        rst = 0;
+
+        // Run a few test cases
+        run_test(7, 6, 5);   // 13 % 5 = 3
+       
+
+        $display("All tests done.");
+        $finish;
+    end
+
+endmodule

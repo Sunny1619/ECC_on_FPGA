@@ -1,0 +1,62 @@
+`timescale 1ns / 1ps
+
+module Shift_Registers_tb;
+
+    reg clk;
+    reg rst;
+    reg start;
+    reg [3:0] r1_in;
+    reg [3:0] r2_in;
+    reg [3:0] m;
+    wire [4:0] out;
+    wire busy;
+
+    // Instantiate the DUT (Design Under Test)
+    Shift_Registers uut (
+        .clk(clk),
+        .rst(rst),
+        .start(start),
+        .r1_in(r1_in),
+        .r2_in(r2_in),
+        .m(m),
+        .out(out),
+        .busy(busy)
+    );
+
+    // Clock generation: toggle every 5 time units (10ns clock period)
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    initial begin
+        // Initialize inputs
+        rst = 1;
+        start = 0;
+        r1_in = 4'd5;
+        r2_in = 4'd6;
+        m = 4'd4;
+
+        #12;
+        rst = 0;
+
+        // Assert start signal for one cycle
+        @(posedge clk);
+        start = 1;
+        @(posedge clk);
+        start = 0;
+
+        // Wait while operation is busy
+        while (busy) begin
+            @(posedge clk);
+            $display("Time: %0t | OUT: %b | BUSY: %b", $time, out, busy);
+        end
+
+        // Final output
+        $display("Final Result: %d (binary: %b)", out, out);
+        #10;
+
+        $finish;
+    end
+
+endmodule
